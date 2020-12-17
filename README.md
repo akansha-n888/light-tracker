@@ -6,6 +6,7 @@
 * [Technologies](#technologies)
 * [Circuit Setup](#circuit-setup)
 * [Status](#status)
+* [Video Link](#video-link)
 * [Contact](#contact)
 
 ## General info
@@ -21,6 +22,9 @@ The purpose of this project is to explore the PID algorithm with the Atmega328 u
 
 ## Status
 Project is: _finished_
+
+## Video Link
+https://youtu.be/08LiVHFQBXw
 
 ## Contact
 Created by [@akansha-n888](https://www.linkedin.com/in/akansha-nagar/) - feel free to contact me!
