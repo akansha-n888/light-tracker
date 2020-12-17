@@ -16,7 +16,7 @@ The purpose of this project is to explore the PID algorithm with the Atmega328 u
 * Arduino PID Library- version 1.2.0 - by [Brett Beauregard ](https://github.com/br3ttb/Arduino-PID-Library)
 
 ## Circuit Setup
-![Set Up](setup.PNG)
+![Set Up](light_tracker.PNG)
 > Mechanical & Electrical Set Up
 
 ## Status
