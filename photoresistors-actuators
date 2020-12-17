@@ -1,0 +1,107 @@
+#include <Servo.h> 
+#include <Stepper.h>
+#include <PID_v1.h>
+
+//Second degree of freedom - altitude
+Servo myservo;
+int pos = 0;
+
+//First degree of freedom - azimuth
+const int stepsPerRevolution = 2048;
+Stepper stepper = Stepper(stepsPerRevolution, 11, 9, 10, 8);
+int move_threshold = 200;                     //assign value based on light sensor values (difference reading usually 30)
+int previous;
+
+//Define LDRs
+int LDR1 = A0;
+int LDR2 = A1;
+
+//PID Parameters
+double SetPoint, Input, Output;
+double Kp = 1, Ki = 0.005, Kd = 0;
+PID PID_control(&Input, &Output, &SetPoint, Kp, Ki, Kd, DIRECT);
+
+void setup() {
+
+   pinMode(LDR1,INPUT);
+   pinMode(LDR2,INPUT);
+   myservo.attach(7);
+   myservo.write(0);
+   Serial.begin(56000);
+   stepper.setSpeed(5);
+   Serial.setTimeout(200);
+   PID_control.SetMode(AUTOMATIC);
+   PID_control.SetTunings(Kp, Ki, Kd);
+   PID_control.SetOutputLimits(-255,255);
+   
+}
+
+void loop() {
+
+  /* for calibration testing*/
+  //Read LDR values
+  int LDRval1 = analogRead(LDR1);
+  Serial.print("LDR1:");
+  Serial.print(LDRval1);                        //find sensor values for no light and light directly on it
+  Serial.print("\t");
+  delay(10);
+  int LDRval2 = analogRead(LDR2);
+  Serial.print("LDR2:");
+  Serial.print(LDRval2);
+  Serial.print("\t");
+  delay(10);
+  int diff = abs(LDRval1 - LDRval2);          //azimuth compare values btwn light sensors
+  Serial.print(" diff:");
+  Serial.print(diff);
+  Serial.print("\t");
+  delay(10); 
+
+  //move stepper motor
+  if (diff >= move_threshold){
+    if(LDRval1 > LDRval2){
+      //move stepper towards ldr1 diff/20
+      stepper.step(diff/20 - previous);
+      previous = diff;
+      Serial.print("steps ldr1:");
+      Serial.print(diff/20 - previous);
+      Serial.print("\t");
+      delay(10);
+      }
+      else{
+      //  move stepper towardsldr2 
+      stepper.step(diff/20 + previous);
+      previous = diff;
+      Serial.print("steps ldr2:");
+      Serial.print(diff/20 + previous);
+      Serial.print("\t");
+      delay(10);
+      }
+    }
+  
+  Input = (LDRval1 + LDRval2)/2;
+  SetPoint = max(LDRval1,LDRval2);
+  
+  PID_control.Compute();              //calculates the Ouput Value
+  pos = map(Output, 0, 255, 0, 90);
+  
+  if (diff >= move_threshold){
+  myservo.write(pos);
+  }
+  
+  Serial.print("Input:");
+  Serial.print(Input);
+  Serial.print("  ");
+  delay(50);
+  Serial.print("Output:");
+  Serial.print(Output);
+  Serial.print("  ");
+  delay(50);
+  Serial.print("Servo Angle:");
+  Serial.print(pos);
+  Serial.print("  ");
+  delay(50);
+  Serial.print("SetPoint:");
+  Serial.println(SetPoint);
+  delay(50);
+
+}
