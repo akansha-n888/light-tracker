@@ -1,3 +1,6 @@
+/* 2 degree of freedom light tracker that uses the stepper motor to rotate about the azimuth
+while the servo motor rotates about the altitude */
+
 #include <Servo.h> 
 #include <Stepper.h>
 #include <PID_v1.h>
